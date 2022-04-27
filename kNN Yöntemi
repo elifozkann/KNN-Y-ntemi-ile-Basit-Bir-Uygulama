@@ -1,0 +1,45 @@
+# Kütüphaneler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+import numpy as np
+import matplotlib.pyplot as plt
+
+dataset = load_iris()
+
+# Bağımlı (X) ve bağımsız (y) değişkenleri oluşturma
+X = dataset.data
+y = dataset.target
+ 
+# Eğitim ve test verilerine ayırma
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state=42)
+
+neighbors = np.arange(1, 9)
+train_accuracy = np.empty(len(neighbors))
+test_accuracy = np.empty(len(neighbors))
+
+knn = KNeighborsClassifier(n_neighbors=7)
+
+knn.fit(X_train, y_train)
+ 
+# Tahmin etme
+print(knn.predict(X_test))
+# Modelin doğruluğunu hesaplama
+print(knn.score(X_test, y_test))
+ 
+# K değeri için for döngüsü
+for i, k in enumerate(neighbors):
+    knn = KNeighborsClassifier(n_neighbors=k)
+    knn.fit(X_train, y_train)
+     
+    # Test ve eğitim verilerinin doğruluğunu hesaplama
+    train_accuracy[i] = knn.score(X_train, y_train)
+    test_accuracy[i] = knn.score(X_test, y_test)
+ 
+# Grafik oluşturma
+plt.plot(neighbors, train_accuracy, label = 'Eğitim veriseti doğruluğu')
+plt.plot(neighbors, test_accuracy, label = 'Deneme veriseti doğruluğu')
+plt.legend()
+plt.xlabel('k değeri')
+plt.ylabel('Doğruluk')
+plt.show()
